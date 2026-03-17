@@ -70,7 +70,7 @@ function Login() {
           <h1>
             Welcome to <br /> Company Name
           </h1>
-          <img src="/auth-images/logo.svg" alt="Logo" />
+          <img src="/logo.svg" alt="Logo" />
         </div>
         <div className="bottom">
           <img
