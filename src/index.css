@@ -11,3 +11,14 @@
   --secondary-color: #313957;
   --primary-text: #0c1421;
 }
+.app-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+.app-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background-color: #424457;
+}
