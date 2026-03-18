@@ -13,6 +13,7 @@ import Product from "./pages/product/Product.jsx";
 import Invoice from "./pages/invoice/Invoice.jsx";
 import Statistics from "./pages/statistics/Statistics.jsx";
 import Settings from "./pages/settings/Settings.jsx";
+import AddProduct from "./pages/product/AddProduct.jsx";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: "product",
         element: <Product />,
+      },
+      {
+        path: "product/add",
+        element: <AddProduct />,
       },
       {
         path: "invoice",
