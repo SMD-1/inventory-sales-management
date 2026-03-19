@@ -101,7 +101,7 @@ const StatsChart = ({ title = "Sales & Purchase" }) => {
                 <stop offset="100%" stopColor="#57DA65" />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+            <CartesianGrid strokeDasharray="0" vertical={false} stroke="#D0D3D9" />
             <XAxis 
               dataKey="name" 
               axisLine={false} 
