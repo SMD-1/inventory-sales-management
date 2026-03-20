@@ -97,3 +97,114 @@ input {
   text-align: center;
   color: var(--secondary-color);
 }
+
+/* Password toggle and inline styles replacement */
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  padding-right: 2.5rem;
+}
+
+.eye-btn {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.forgot-password-link {
+  align-self: flex-end;
+  text-decoration: none;
+}
+
+/* Mobile specific styling */
+@media (max-width: 768px) {
+  .container {
+    width: 100vw;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .left {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    padding: 0 2rem;
+  }
+
+  .auth-illustration {
+    display: none;
+  }
+
+  .auth-details {
+    width: 100%;
+    gap: 2rem;
+  }
+
+  .auth-header h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+
+  .auth-subtitle {
+    font-size: 0.95rem;
+    color: #667085;
+  }
+
+  .auth-form {
+    gap: 1.25rem;
+  }
+
+  input {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+  }
+
+  input::placeholder {
+    color: #858d9d;
+    font-size: 0.95rem;
+  }
+
+  .auth-field span {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #1c1c1c;
+    margin-bottom: 0.35rem;
+  }
+
+  .forgot-password-link {
+    color: #2f54eb;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .submit-btn {
+    border-radius: 0.5rem;
+    padding: 0.9rem 0;
+    margin-top: 0.5rem;
+    font-weight: 500;
+  }
+
+  .auth-switch {
+    font-size: 0.95rem;
+    margin-top: 1rem;
+  }
+
+  .auth-switch .link {
+    text-decoration: none;
+    font-weight: 500;
+  }
+}

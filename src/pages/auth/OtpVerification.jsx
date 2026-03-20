@@ -13,18 +13,18 @@ function OtpVerification() {
   };
 
   return (
-    <div className="signup">
-      <div className="signup-container">
-        <div className="signup-details">
-          <header className="signup-header">
+    <div className="container">
+      <div className="left">
+        <div className="auth-details">
+          <header className="auth-header">
             <h1>Enter Your OTP</h1>
-            <p className="signup-subtitle">
+            <p className="auth-subtitle">
               We've sent a 6-digit OTP to your registered mail. <br /> Please
               enter it below to sign in.
             </p>
           </header>
-          <form className="signup-form" onSubmit={handleSubmit(onSubmit)}>
-            <label className="signup-field">
+          <form className="auth-form" onSubmit={handleSubmit(onSubmit)}>
+            <label className="auth-field">
               <span>OTP</span>
               <input
                 type="text"
@@ -40,13 +40,13 @@ function OtpVerification() {
               ) : null}
             </label>
 
-            <button className="signup-btn" type="submit">
+            <button className="submit-btn" type="submit">
               Send Mail
             </button>
           </form>
         </div>
       </div>
-      <div className="signup-illustration">
+      <div className="auth-illustration">
         <img
           src="/auth-images/otp-verification-illustration.svg"
           alt="auth illustration"

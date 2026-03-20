@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import "./auth.css";
 
 function Signup() {
@@ -8,6 +10,9 @@ function Signup() {
     handleSubmit,
     formState: { errors },
   } = useForm();
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const onSubmit = (data) => {
     console.log("Signup submitted", data);
@@ -46,22 +51,48 @@ function Signup() {
             </label>
             <label className="auth-field">
               <span>Create Password</span>
-              <input
-                type="password"
-                placeholder="Create a password"
-                {...register("password", { required: true })}
-              />
+              <div className="password-input-wrapper">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Create a password"
+                  {...register("password", { required: true })}
+                />
+                <button
+                  type="button"
+                  className="eye-btn"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff size={18} color="#858D9D" />
+                  ) : (
+                    <Eye size={18} color="#858D9D" />
+                  )}
+                </button>
+              </div>
               {errors.password ? (
                 <span className="field-error">Password is required.</span>
               ) : null}
             </label>
             <label className="auth-field">
               <span>Confirm Password</span>
-              <input
-                type="password"
-                placeholder="Confirm your password"
-                {...register("confirmPassword", { required: true })}
-              />
+              <div className="password-input-wrapper">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Confirm your password"
+                  {...register("confirmPassword", { required: true })}
+                />
+                <button
+                  type="button"
+                  className="eye-btn"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff size={18} color="#858D9D" />
+                  ) : (
+                    <Eye size={18} color="#858D9D" />
+                  )}
+                </button>
+              </div>
               {errors.confirmPassword ? (
                 <span className="field-error">
                   Confirm password is required.
