@@ -1,12 +1,15 @@
 import "./Header.css";
 import { useHeader } from "../../contexts/header-context";
-import { Search } from "lucide-react";
+import { Search, Settings } from "lucide-react";
 
 const Header = () => {
   const { title } = useHeader();
   return (
     <div className="header">
-      <p>{title}</p>
+      <div className="header-mobile-logo">
+        <img src="/logo.svg" alt="Company Logo" />
+      </div>
+      <p className="header-title">{title}</p>
       <div className="search">
         <Search
           width={24}
@@ -15,6 +18,9 @@ const Header = () => {
           style={{ marginLeft: "1.5rem" }}
         />
         <input type="text" placeholder="Search here..." />
+      </div>
+      <div className="header-mobile-settings">
+        <Settings width={24} height={24} color="#fff" />
       </div>
     </div>
   );

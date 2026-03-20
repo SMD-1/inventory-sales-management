@@ -33,3 +33,35 @@
 .search input::placeholder {
   color: #fff;
 }
+
+.header-mobile-logo, .header-mobile-settings {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .header {
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    justify-content: space-between;
+    background-color: transparent;
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+  }
+  .header-mobile-logo {
+    display: flex;
+    align-items: center;
+  }
+  .header-mobile-logo img {
+    height: 40px;
+    width: 40px;
+  }
+  .header-mobile-settings {
+    display: flex;
+    align-items: center;
+  }
+  .header-title, .search {
+    display: none;
+  }
+}

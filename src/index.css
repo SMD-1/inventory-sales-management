@@ -23,3 +23,14 @@
   background-color: #424457;
   position: relative;
 }
+
+@media (max-width: 768px) {
+  .app-layout {
+    flex-direction: column;
+    background-color: var(--secondary-color);
+  }
+  .app-content {
+    background-color: transparent;
+    padding-bottom: 90px;
+  }
+}
