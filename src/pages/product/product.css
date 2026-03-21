@@ -355,3 +355,91 @@
 .next-btn:hover {
   background: #1c2738;
 }
+
+/* Mobile Responsiveness */
+.availability-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .product {
+    padding: 0;
+    gap: 1rem;
+  }
+  
+  .overall {
+    padding: 1rem;
+    border-radius: 0.5rem;
+  }
+  
+  .overall-details {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem 1rem;
+  }
+  
+  .details {
+    border: none;
+    padding: 0;
+  }
+
+  .product-header p {
+    font-size: 18px;
+    margin-left: 0;
+  }
+  
+  .products-table th:nth-child(2),
+  .products-table td:nth-child(2),
+  .products-table th:nth-child(3),
+  .products-table td:nth-child(3),
+  .products-table th:nth-child(4),
+  .products-table td:nth-child(4),
+  .products-table th:nth-child(5),
+  .products-table td:nth-child(5) {
+    display: none;
+  }
+  
+  .products-table th,
+  .products-table td {
+    padding: 1rem 0.5rem;
+  }
+  
+  .products-table th:first-child,
+  .products-table td:first-child {
+    padding-left: 1rem;
+  }
+
+  .availability-cell {
+    justify-content: center;
+  }
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-content {
+    padding: 2rem;
+    max-height: 90vh;
+    overflow-y: auto;
+    width: min(90vw, 420px);
+  }
+
+  .csv-modal-content {
+    max-height: 90vh;
+    overflow-y: auto;
+    width: min(90vw, 500px);
+  }
+  
+  .product-header button {
+    position: fixed;
+    bottom: 8rem;
+    right: 1.5rem;
+    z-index: 100;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  }
+}

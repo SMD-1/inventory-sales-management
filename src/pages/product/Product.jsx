@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useHeader } from "../../contexts/header-context";
 import { useNavigate } from "react-router-dom";
 import "./product.css";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Info } from "lucide-react";
 
 const overallInventory = [
   {
@@ -140,6 +140,18 @@ const Product = () => {
     setTitle("Product");
   }, [setTitle]);
 
+  useEffect(() => {
+    if (isModalOpen || isCSVModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isModalOpen, isCSVModalOpen]);
+
   return (
     <div className="product">
       <div className="overall">
@@ -194,7 +206,10 @@ const Product = () => {
                           : "low-stock"
                     }
                   >
-                    {product.availability}
+                    <div className="availability-cell">
+                      <span>{product.availability === "In-stock" ? "In- stock" : product.availability}</span>
+                      <Info size={16} color="#00B2FF" />
+                    </div>
                   </td>
                 </tr>
               ))}
