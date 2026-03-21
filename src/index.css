@@ -31,6 +31,12 @@
   }
   .app-content {
     background-color: transparent;
-    padding-bottom: 90px;
+    padding-bottom: 70px;
+  }
+  .app-content.is-settings {
+    padding-top: 0;
+  }
+  .settings-header-wrapper {
+    display: none;
   }
 }

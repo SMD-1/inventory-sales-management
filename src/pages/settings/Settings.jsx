@@ -1,9 +1,12 @@
 import { useEffect } from "react";
 import { useHeader } from "../../contexts/header-context";
+import { X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import "./settings.css";
 
 const Settings = () => {
   const { setTitle } = useHeader();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setTitle("Settings");
@@ -14,6 +17,7 @@ const Settings = () => {
       <div className="profile-card">
         <div className="profile-header">
           <div className="tab">Edit Profile</div>
+          <X className="close-icon" onClick={() => navigate(-1)} size={24} cursor="pointer" color="#1c1c1c" />
         </div>
 
         <form className="profile-form">

@@ -1,9 +1,11 @@
 import "./Header.css";
 import { useHeader } from "../../contexts/header-context";
 import { Search, Settings } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const { title } = useHeader();
+  const navigate = useNavigate();
   return (
     <div className="header">
       <div className="header-mobile-logo">
@@ -20,7 +22,7 @@ const Header = () => {
         <input type="text" placeholder="Search here..." />
       </div>
       <div className="header-mobile-settings">
-        <Settings width={24} height={24} color="#fff" />
+        <Settings onClick={() => navigate("/settings")} width={24} height={24} color="#fff" />
       </div>
     </div>
   );
