@@ -207,6 +207,20 @@ const Invoice = () => {
                         <MoreVertical size={16} color="#858D9D" />
                       </button>
                     </div>
+                    <div className="mobile-actions">
+                      <button 
+                        className="mobile-action-btn view" 
+                        onClick={() => setSelectedInvoice(inv)}
+                      >
+                        <Eye size={16} color="#000" />
+                      </button>
+                      <button 
+                        className="mobile-action-btn delete" 
+                        onClick={() => setInvoiceToDelete(inv.id)}
+                      >
+                        <Trash2 size={16} color="#000" />
+                      </button>
+                    </div>
 
                     {openMenuId === inv.id && invoiceToDelete !== inv.id && (
                       <>
@@ -307,23 +321,31 @@ const Invoice = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="invoice-inner-paper">
-              <div className="invoice-header-title">
-                <h1>INVOICE</h1>
-              </div>
-
-              <div className="invoice-meta-top">
-                <div className="billed-section">
-                  <h4>Billed to</h4>
-                  <p>
-                    <strong>Company Name</strong>
-                  </p>
-                  <p>Company address</p>
-                  <p>City, Country - 00000</p>
+              <div className="invoice-sticky-header">
+                <div className="invoice-header-title">
+                  <h1>INVOICE</h1>
+                  <button
+                    className="mobile-close-btn"
+                    onClick={() => setSelectedInvoice(null)}
+                  >
+                    <X size={24} />
+                  </button>
                 </div>
-                <div className="business-section">
-                  <h4>Business address</h4>
-                  <p>City, State, IN - 000 000</p>
-                  <p>TAX ID D0XXXXX1234X0XX</p>
+
+                <div className="invoice-meta-top">
+                  <div className="billed-section">
+                    <h4>Billed to</h4>
+                    <p>
+                      <strong>Company Name</strong>
+                    </p>
+                    <p>Company address</p>
+                    <p>City, Country - 00000</p>
+                  </div>
+                  <div className="business-section">
+                    <h4>Business address</h4>
+                    <p>City, State, IN - 000 000</p>
+                    <p>TAX ID D0XXXXX1234X0XX</p>
+                  </div>
                 </div>
               </div>
 

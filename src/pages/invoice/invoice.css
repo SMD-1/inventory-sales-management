@@ -335,9 +335,24 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.invoice-sticky-header {
+  position: sticky;
+  top: -2rem;
+  margin: -2rem -2rem 0;
+  padding: 2rem 2rem 1.5rem;
+  background-color: #f9fafc;
+  z-index: 10;
+  border-bottom: 1px solid #e0e2e7;
+}
+
+.mobile-close-btn {
+  display: none;
 }
 
 .invoice-header-title h1 {
@@ -378,7 +393,6 @@
   display: grid;
   grid-template-columns: 150px 1fr;
   gap: 3rem;
-  border-top: 1px solid #d7dae0;
   padding-top: 1.5rem;
 }
 
@@ -435,7 +449,6 @@
 
 .items-table .qty-cell {
   text-align: center;
-  padding-left: 2rem;
 }
 
 .invoice-summary {
@@ -531,23 +544,6 @@
   color: white;
 }
 
-@media (max-width: 768px) {
-  .invoice-inner-paper {
-    padding: 1.5rem;
-  }
-  .invoice-main-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  .invoice-meta-top {
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-  .business-section {
-    text-align: left;
-  }
-}
-
 .delete-action-popover {
   position: absolute;
   top: 50%;
@@ -609,4 +605,156 @@
 
 .delete-confirm-btn:hover {
   background-color: #333;
+}
+
+/* Mobile Actions */
+.mobile-actions {
+  display: none;
+}
+
+.mobile-action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.mobile-action-btn.view {
+  background-color: #00bfff;
+}
+
+.mobile-action-btn.delete {
+  background-color: #ff5a1f;
+}
+
+@media (max-width: 768px) {
+  .invoice-sticky-header {
+    top: -1.5rem;
+    margin: -1.5rem -1.5rem 0;
+    padding: 1.5rem 1.5rem 1rem;
+  }
+  .invoice-header-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .mobile-close-btn {
+    display: block;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #1c1c1c;
+    padding: 0;
+  }
+  .modal-side-actions {
+    display: none;
+  }
+  .invoice-main-grid {
+    grid-template-columns: 100px 1fr;
+    gap: 1rem;
+  }
+  .invoice-meta-top {
+    flex-direction: row;
+    gap: 1rem;
+  }
+  .business-section p,
+  .billed-section p,
+  .business-section h4 {
+    font-size: 12px;
+  }
+  .business-section {
+    font-size: 10px;
+    text-align: right;
+  }
+  .invoice-page {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .overall-invoice {
+    padding: 1rem;
+  }
+
+  .status-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem 1rem;
+  }
+
+  .status-card {
+    border: none;
+    padding: 0;
+  }
+
+  .invoices-table th:nth-child(2),
+  .invoices-table td:nth-child(2),
+  .invoices-table th:nth-child(3),
+  .invoices-table td:nth-child(3),
+  .invoices-table th:nth-child(4),
+  .invoices-table td:nth-child(4) {
+    display: none;
+  }
+
+  .invoices-table th:nth-child(5) {
+    color: transparent;
+  }
+
+  .invoices-table td {
+    padding: 0.5rem;
+  }
+
+  .invoices-table th:first-child,
+  .invoices-table td:first-child {
+    padding-left: 1rem;
+  }
+
+  .date-content {
+    display: none;
+  }
+
+  .mobile-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .modal-overlay-blur {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #f9fafc;
+    z-index: 2000;
+    align-items: flex-start;
+    padding: 0;
+  }
+
+  .invoice-modal-content {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .invoice-inner-paper {
+    height: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 1rem;
+  }
+
+  .invoice-sticky-header {
+    top: -1.5rem;
+    margin: -1.5rem -1.5rem 0;
+    padding: 1.5rem 1.5rem 1rem;
+    border-radius: 0;
+  }
+  .invoice-contact-footer {
+    margin-bottom: 4.5rem;
+  }
 }

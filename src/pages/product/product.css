@@ -366,7 +366,7 @@
 
 @media (max-width: 768px) {
   .product {
-    padding: 0;
+    padding: 1rem;
     gap: 1rem;
   }
   
