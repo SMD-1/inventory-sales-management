@@ -1,7 +1,13 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  Outlet,
+  RouterProvider,
+} from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import Signup from "./pages/auth/Signup.jsx";
 import Login from "./pages/auth/Login.jsx";
 import ForgotPassword from "./pages/auth/ForgotPassword.jsx";
@@ -14,62 +20,90 @@ import Invoice from "./pages/invoice/Invoice.jsx";
 import Statistics from "./pages/statistics/Statistics.jsx";
 import Settings from "./pages/settings/Settings.jsx";
 import AddProduct from "./pages/product/AddProduct.jsx";
+import { isLoggedIn } from "./utils/auth.js";
+
+const ProtectedRoute = () => {
+  if (!isLoggedIn()) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Outlet />;
+};
+
+const AuthRoute = () => {
+  if (isLoggedIn()) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <Outlet />;
+};
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <AppLayout />,
+    element: <ProtectedRoute />,
     children: [
       {
-        index: true,
-        element: <Home />,
-      },
-      {
-        path: "product",
-        element: <Product />,
-      },
-      {
-        path: "product/add",
-        element: <AddProduct />,
-      },
-      {
-        path: "invoice",
-        element: <Invoice />,
-      },
-      {
-        path: "statistics",
-        element: <Statistics />,
-      },
-      {
-        path: "settings",
-        element: <Settings />,
+        path: "/",
+        element: <AppLayout />,
+        children: [
+          {
+            index: true,
+            element: <Home />,
+          },
+          {
+            path: "product",
+            element: <Product />,
+          },
+          {
+            path: "product/add",
+            element: <AddProduct />,
+          },
+          {
+            path: "invoice",
+            element: <Invoice />,
+          },
+          {
+            path: "statistics",
+            element: <Statistics />,
+          },
+          {
+            path: "settings",
+            element: <Settings />,
+          },
+        ],
       },
     ],
   },
   {
-    path: "/signup",
-    element: <Signup />,
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/forgot-password",
-    element: <ForgotPassword />,
-  },
-  {
-    path: "/otp-verification",
-    element: <OtpVerification />,
-  },
-  {
-    path: "/create-new-password",
-    element: <CreateNewPassword />,
+    element: <AuthRoute />,
+    children: [
+      {
+        path: "/signup",
+        element: <Signup />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
+      },
+      {
+        path: "/forgot-password",
+        element: <ForgotPassword />,
+      },
+      {
+        path: "/otp-verification",
+        element: <OtpVerification />,
+      },
+      {
+        path: "/create-new-password",
+        element: <CreateNewPassword />,
+      },
+    ],
   },
 ]);
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <RouterProvider router={router} />
+    <Toaster position="top-right" />
   </StrictMode>,
 );

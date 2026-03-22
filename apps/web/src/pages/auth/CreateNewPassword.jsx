@@ -1,8 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import toast from "react-hot-toast";
 import "./auth.css";
+import { post } from "../../utils/api.js";
+import { clearResetEmail, getResetEmail } from "../../utils/auth.js";
 
 function CreateNewPassword() {
   const {
@@ -13,9 +16,44 @@ function CreateNewPassword() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const navigate = useNavigate();
+  const resetEmail = getResetEmail();
 
-  const onSubmit = (data) => {
-    console.log("Create New Password form submitted", data);
+  useEffect(() => {
+    if (!resetEmail && !hasSubmitted) {
+      navigate("/forgot-password", { replace: true });
+    }
+  }, [navigate, resetEmail, hasSubmitted]);
+
+  const onSubmit = async (data) => {
+    if (data.password !== data.confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    if (!resetEmail) {
+      toast.error("Please enter your email again");
+      navigate("/forgot-password");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      setHasSubmitted(true);
+      await post("/api/auth/reset-password", {
+        email: resetEmail,
+        password: data.password,
+      });
+      clearResetEmail();
+      toast.success("Password reset successful");
+      navigate("/login");
+    } catch (error) {
+      toast.error(error.message || "Password reset failed");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -87,7 +125,7 @@ function CreateNewPassword() {
             >
               Forgot Password?
             </Link>
-            <button className="submit-btn" type="submit">
+            <button className="submit-btn" type="submit" disabled={isSubmitting}>
               Reset Password
             </button>
           </form>

@@ -1,5 +1,10 @@
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import "./auth.css";
+import { post } from "../../utils/api.js";
+import { getResetEmail } from "../../utils/auth.js";
 
 function OtpVerification() {
   const {
@@ -7,9 +12,36 @@ function OtpVerification() {
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
+  const resetEmail = getResetEmail();
 
-  const onSubmit = (data) => {
-    console.log("Signup submitted", data);
+  useEffect(() => {
+    if (!resetEmail) {
+      navigate("/forgot-password", { replace: true });
+    }
+  }, [navigate, resetEmail]);
+
+  const onSubmit = async (data) => {
+    if (!resetEmail) {
+      toast.error("Please enter your email again");
+      navigate("/forgot-password");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      await post("/api/auth/verify-otp", {
+        email: resetEmail,
+        otp: data.otp,
+      });
+      toast.success("OTP verified");
+      navigate("/create-new-password");
+    } catch (error) {
+      toast.error(error.message || "OTP verification failed");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -40,8 +72,8 @@ function OtpVerification() {
               ) : null}
             </label>
 
-            <button className="submit-btn" type="submit">
-              Send Mail
+            <button className="submit-btn" type="submit" disabled={isSubmitting}>
+              Verify OTP
             </button>
           </form>
         </div>

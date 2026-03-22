@@ -1,8 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import toast from "react-hot-toast";
 import "./auth.css";
+import { post } from "../../utils/api.js";
+import { setToken } from "../../utils/auth.js";
 
 function Signup() {
   const {
@@ -13,9 +16,36 @@ function Signup() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
-  const onSubmit = (data) => {
-    console.log("Signup submitted", data);
+  const onSubmit = async (data) => {
+    if (data.password !== data.confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      await post("/api/auth/signup", {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      });
+      const loginResponse = await post("/api/auth/login", {
+        email: data.email,
+        password: data.password,
+      });
+      if (loginResponse?.data?.token) {
+        setToken(loginResponse.data.token);
+      }
+      toast.success("Account created");
+      navigate("/");
+    } catch (error) {
+      toast.error(error.message || "Signup failed");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -99,7 +129,7 @@ function Signup() {
                 </span>
               ) : null}
             </label>
-            <button className="submit-btn" type="submit">
+            <button className="submit-btn" type="submit" disabled={isSubmitting}>
               Sign up
             </button>
           </form>
