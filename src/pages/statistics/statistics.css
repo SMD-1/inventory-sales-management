@@ -100,12 +100,10 @@
   .statistics-page {
     display: flex;
     flex-direction: column;
-    padding: 0;
     gap: 1rem;
-    margin-bottom: 4rem; /* For navigation bar */
+    padding: 1rem;
   }
 
-  /* Display contents allows Flexbox ordering of the children */
   .stats-main-content {
     display: contents;
   }
@@ -116,18 +114,12 @@
 
   .stats-summary-grid {
     order: 2;
-    padding: 0 1rem;
     grid-template-columns: repeat(3, 1fr);
     gap: 0.5rem;
   }
 
   .sidebar-wrapper {
     order: 3;
-    padding: 0 1rem;
-  }
-
-  .chart-wrapper {
-    padding: 1rem 1rem 0 1rem;
   }
 
   .stat-card {

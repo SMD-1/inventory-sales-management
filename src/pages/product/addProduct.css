@@ -128,7 +128,7 @@
   color: #48505e;
 }
 
-.submit-btn {
+.form-actions .submit-btn {
   background-color: #242531;
   color: #fff;
   border: none;
@@ -138,6 +138,6 @@
   cursor: pointer;
 }
 
-.submit-btn:hover {
+.form-actions .submit-btn:hover {
   background-color: #383e49;
 }
