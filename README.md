@@ -1,16 +1,45 @@
-# React + Vite
+# Inventory Sales Management Monorepo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This repo is a Turbo + pnpm monorepo with two apps:
 
-Currently, two official plugins are available:
+- `apps/web`: React + Vite frontend
+- `apps/api`: Node + Express + MongoDB backend
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Prerequisites
 
-## React Compiler
+- Node.js 18+
+- pnpm
+- MongoDB running locally or a remote URI
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Setup
 
-## Expanding the ESLint configuration
+```bash
+pnpm install
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Create a root `.env` from `.env.example` and update values.
+
+## Development
+
+```bash
+pnpm dev
+```
+
+Or run a single app:
+
+```bash
+pnpm --filter web dev
+pnpm --filter api dev
+```
+
+## Build
+
+```bash
+pnpm build
+```
+
+## Lint
+
+```bash
+pnpm lint
+```

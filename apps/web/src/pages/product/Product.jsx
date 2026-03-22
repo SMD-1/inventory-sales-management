@@ -207,8 +207,8 @@ const Product = () => {
                     }
                   >
                     <div className="availability-cell">
-                      <span>{product.availability === "In-stock" ? "In- stock" : product.availability}</span>
-                      <Info size={16} color="#00B2FF" />
+                      <span>{product.availability}</span>
+                      <Info className="info-icon" size={16} color="#00B2FF" />
                     </div>
                   </td>
                 </tr>
