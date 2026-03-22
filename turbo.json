@@ -18,7 +18,13 @@
     },
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**", ".next/**"]
+    },
+    "api#build": {
+      "outputs": []
+    },
+    "start": {
+      "dependsOn": ["build"]
     },
     "lint": {},
     "test": {}
