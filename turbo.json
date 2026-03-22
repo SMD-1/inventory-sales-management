@@ -11,7 +11,7 @@
     "EMAIL_FROM",
     "PORT"
   ],
-  "pipeline": {
+  "tasks": {
     "dev": {
       "cache": false,
       "persistent": true
