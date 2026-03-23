@@ -10,7 +10,7 @@ import {
   Printer,
   Info,
 } from "lucide-react";
-import { get } from "../../utils/api";
+import { get, patch, del } from "../../utils/api";
 import { toast } from "react-hot-toast";
 import { useReactToPrint } from "react-to-print";
 import "./invoice.css";
@@ -81,6 +81,23 @@ const invoiceData = [
   },
 ];
 
+const TAX_RATE = 0.1;
+
+const calculateInvoiceTotals = (invoice) => {
+  const items = Array.isArray(invoice?.items) ? invoice.items : [];
+  const computedSubtotal = items.reduce((sum, item) => {
+    const quantity = Number(item?.quantity) || 0;
+    const price = Number(item?.price) || 0;
+    return sum + quantity * price;
+  }, 0);
+  const fallbackSubtotal = Number(invoice?.amount) || 0;
+  const subtotal = computedSubtotal > 0 ? computedSubtotal : fallbackSubtotal;
+  const taxAmount = subtotal * TAX_RATE;
+  const total = subtotal + taxAmount;
+
+  return { items, subtotal, taxAmount, total };
+};
+
 const Invoice = () => {
   const { setTitle, searchQuery } = useHeader();
   const [invoices, setInvoices] = useState([]);
@@ -100,6 +117,9 @@ const Invoice = () => {
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [invoiceToDelete, setInvoiceToDelete] = useState(null);
   const printRef = useRef(null);
+  const invoiceTotals = selectedInvoice
+    ? calculateInvoiceTotals(selectedInvoice)
+    : null;
 
   const handlePrint = useReactToPrint({
     contentRef: printRef,
@@ -151,23 +171,42 @@ const Invoice = () => {
     }
   };
 
-  const handleToggleStatus = (id) => {
-    setInvoices((prev) =>
-      prev.map((inv) =>
-        inv.id === id
-          ? { ...inv, status: inv.status === "Paid" ? "Unpaid" : "Paid" }
-          : inv,
-      ),
-    );
+  const handleToggleStatus = async (id) => {
+    try {
+      const res = await patch(`/api/invoices/${id}/status`);
+      const updatedInvoice = res.data?.invoice || res.invoice;
+
+      setInvoices((prev) =>
+        prev.map((inv) => (inv._id === id ? updatedInvoice : inv)),
+      );
+      
+      // Refresh stats to update "Processed Invoices" count
+      fetchStats();
+      
+      toast.success(`Status updated to ${updatedInvoice.status}`);
+    } catch (err) {
+      toast.error("Failed to update status");
+    }
     setOpenMenuId(null);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (invoiceToDelete) {
-      setInvoices((prev) => prev.filter((inv) => inv.id !== invoiceToDelete));
-      setInvoiceToDelete(null);
+      try {
+        await del(`/api/invoices/${invoiceToDelete}`);
+        
+        setInvoices((prev) => prev.filter((inv) => inv._id !== invoiceToDelete));
+        setInvoiceToDelete(null);
+        
+        // Refresh stats after deletion
+        fetchStats();
+        toast.success("Invoice deleted successfully");
+      } catch (err) {
+        toast.error("Failed to delete invoice");
+      }
     }
   };
+  console.log("Selected Invoice", selectedInvoice);
 
   return (
     <div className="invoice-page">
@@ -270,7 +309,7 @@ const Invoice = () => {
                       <button
                         className="more-btn"
                         onClick={() => {
-                          setOpenMenuId(openMenuId === inv.invoiceId ? null : inv.invoiceId);
+                          setOpenMenuId(openMenuId === inv._id ? null : inv._id);
                           setInvoiceToDelete(null);
                         }}
                       >
@@ -286,13 +325,13 @@ const Invoice = () => {
                       </button>
                       <button 
                         className="mobile-action-btn delete" 
-                        onClick={() => setInvoiceToDelete(inv.invoiceId)}
+                        onClick={() => setInvoiceToDelete(inv._id)}
                       >
                         <Trash2 size={16} color="#000" />
                       </button>
                     </div>
 
-                    {openMenuId === inv.invoiceId && invoiceToDelete !== inv.invoiceId && (
+                    {openMenuId === inv._id && invoiceToDelete !== inv._id && (
                       <>
                         <div
                           className="list-overlay"
@@ -304,7 +343,7 @@ const Invoice = () => {
                           {inv.status === "Unpaid" ? (
                             <button
                               className="status-btn-toggle to-paid"
-                              onClick={() => handleToggleStatus(inv.invoiceId)}
+                              onClick={() => handleToggleStatus(inv._id)}
                             >
                               <CheckCircle size={14} />
                               Paid
@@ -321,23 +360,23 @@ const Invoice = () => {
                                 <Eye size={16} color="#00BFFF" />
                                 View Invoice
                               </button>
-                              <button
-                                className="menu-item delete"
-                                onClick={() => {
-                                  setInvoiceToDelete(inv.invoiceId);
-                                  setOpenMenuId(null);
-                                }}
-                              >
-                                <Trash2 size={16} color="#DA3E33" />
-                                Delete
-                              </button>
+                                <button
+                                  className="menu-item delete"
+                                  onClick={() => {
+                                    setInvoiceToDelete(inv._id);
+                                    setOpenMenuId(null);
+                                  }}
+                                >
+                                  <Trash2 size={16} color="#DA3E33" />
+                                  Delete
+                                </button>
                             </div>
                           )}
                         </div>
                       </>
                     )}
 
-                    {invoiceToDelete === inv.invoiceId && (
+                    {invoiceToDelete === inv._id && (
                       <>
                         <div
                           className="list-overlay"
@@ -471,31 +510,23 @@ const Invoice = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>Basmati Rice (5kg)</td>
-                          <td className="qty-cell">1</td>
-                          <td className="price-cell">1,090</td>
-                        </tr>
-                        <tr>
-                          <td>Aashirvaad Atta (10kg)</td>
-                          <td className="qty-cell">1</td>
-                          <td className="price-cell">545</td>
-                        </tr>
-                        <tr>
-                          <td>Fortune Sunflower Oil (5L)</td>
-                          <td className="qty-cell">1</td>
-                          <td className="price-cell">1,090</td>
-                        </tr>
-                        <tr>
-                          <td>Amul Toned Milk (1L)</td>
-                          <td className="qty-cell">5</td>
-                          <td className="price-cell">273</td>
-                        </tr>
-                        <tr>
-                          <td>Fortune Sunflower Oil (5L)</td>
-                          <td className="qty-cell">1</td>
-                          <td className="price-cell">1,090</td>
-                        </tr>
+                        {invoiceTotals?.items?.length ? (
+                          invoiceTotals.items.map((item, index) => (
+                            <tr key={item.productId || `${item.productName}-${index}`}>
+                              <td>{item.productName || "-"}</td>
+                              <td className="qty-cell">{item.quantity ?? "-"}</td>
+                              <td className="price-cell">
+                                {Number(item.price || 0).toLocaleString()}
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="3" style={{ textAlign: "center", padding: "1rem" }}>
+                              No items available.
+                            </td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
 
@@ -503,16 +534,16 @@ const Invoice = () => {
                       <div className="summary-row">
                         <div className="sub-total">
                           <span>Subtotal</span>
-                          <span>₹5,090</span>
+                          <span>₹{Number(invoiceTotals?.subtotal || 0).toLocaleString()}</span>
                         </div>
                         <div className="summary-tax">
                           <span>Tax (10%)</span>
-                          <span>₹510</span>
+                          <span>₹{Number(invoiceTotals?.taxAmount || 0).toLocaleString()}</span>
                         </div>
                       </div>
                       <div className="summary-total">
                         <span>Total due</span>
-                        <span>₹{selectedInvoice.amount}</span>
+                        <span>₹{Number(invoiceTotals?.total || 0).toLocaleString()}</span>
                       </div>
                     </div>
                   </div>
