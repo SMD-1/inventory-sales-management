@@ -4,7 +4,7 @@ import { Search, Settings } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const Header = () => {
-  const { title } = useHeader();
+  const { title, searchQuery, setSearchQuery } = useHeader();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -24,7 +24,12 @@ const Header = () => {
             color="#fff"
             style={{ marginLeft: "1.5rem" }}
           />
-          <input type="text" placeholder="Search here..." />
+          <input 
+            type="text" 
+            placeholder="Search here..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
       )}
       <div className="header-mobile-settings">

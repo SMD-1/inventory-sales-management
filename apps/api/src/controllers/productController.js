@@ -9,16 +9,72 @@ export const getProducts = async (req, res, next) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const products = await Product.find()
+    const query = {};
+    if (req.query.search) {
+      const searchStr = req.query.search;
+      const sl = searchStr.toLowerCase();
+      const regex = new RegExp(searchStr, "i");
+      
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const conditions = [{ name: regex }];
+
+      if ("expired".includes(sl)) {
+        conditions.push({ expiryDate: { $lt: today } });
+      }
+      if ("out of stock".includes(sl)) {
+        conditions.push({ quantity: 0 });
+      }
+      if ("low stock".includes(sl)) {
+        conditions.push({
+          $expr: { $and: [ { $lte: ["$quantity", "$threshold"] }, { $gt: ["$quantity", 0] } ] },
+          $or: [{ expiryDate: { $exists: false } }, { expiryDate: { $gte: today } }]
+        });
+      }
+      if ("in-stock".includes(sl) || "in stock".includes(sl)) {
+        conditions.push({
+          $expr: { $gt: ["$quantity", "$threshold"] },
+          $or: [{ expiryDate: { $exists: false } }, { expiryDate: { $gte: today } }]
+        });
+      }
+
+      query.$or = conditions;
+    }
+
+    const products = await Product.find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
-    const total = await Product.countDocuments();
+    const total = await Product.countDocuments(query);
 
+    return success(
+      res,
+      {
+        products,
+        pagination: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        },
+      },
+      "Products fetched successfully",
+      200,
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
+// GET /api/products/product-stats
+export const getProductStats = async (req, res, next) => {
+  try {
     const allProducts = await Product.find(
       {},
       "category price quantity threshold expiryDate",
     );
+    let totalProductCount = 0;
     let totalStockValue = 0;
     let lowStockCount = 0;
     let outOfStockCount = 0;
@@ -28,6 +84,7 @@ export const getProducts = async (req, res, next) => {
 
     allProducts.forEach((p) => {
       if (p.category) categoriesSet.add(p.category);
+      totalProductCount += p.quantity;
       totalStockValue += p.price * p.quantity;
       const isExpired = p.expiryDate && new Date(p.expiryDate) < today;
       if (isExpired || p.quantity === 0) {
@@ -40,22 +97,13 @@ export const getProducts = async (req, res, next) => {
     return success(
       res,
       {
-        products,
-        metrics: {
-          categories: categoriesSet.size,
-          totalProducts: total,
-          totalStockValue,
-          lowStockCount,
-          outOfStockCount,
-        },
-        pagination: {
-          total,
-          page,
-          limit,
-          totalPages: Math.ceil(total / limit),
-        },
+        categories: categoriesSet.size,
+        totalProducts: totalProductCount,
+        totalStockValue,
+        lowStockCount,
+        outOfStockCount,
       },
-      "Products fetched successfully",
+      "Product stats fetched successfully",
       200,
     );
   } catch (err) {

@@ -1,13 +1,17 @@
 import { Router } from "express";
 import express from "express";
 import {
-  getProducts,
-  createProduct,
   bulkCreateProducts,
+  createProduct,
+  getProducts,
+  getProductStats,
 } from "../controllers/productController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = Router();
+
+// GET /api/products/product-stats
+router.get("/product-stats", authMiddleware, getProductStats);
 
 // GET /api/products
 router.get("/", authMiddleware, getProducts);
