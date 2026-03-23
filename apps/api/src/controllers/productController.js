@@ -9,18 +9,55 @@ export const getProducts = async (req, res, next) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const products = await Product.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
+    const products = await Product.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
     const total = await Product.countDocuments();
 
-    return success(res, { 
-      products,
-      pagination: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit)
+    const allProducts = await Product.find(
+      {},
+      "category price quantity threshold expiryDate",
+    );
+    let totalStockValue = 0;
+    let lowStockCount = 0;
+    let outOfStockCount = 0;
+    const categoriesSet = new Set();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    allProducts.forEach((p) => {
+      if (p.category) categoriesSet.add(p.category);
+      totalStockValue += p.price * p.quantity;
+      const isExpired = p.expiryDate && new Date(p.expiryDate) < today;
+      if (isExpired || p.quantity === 0) {
+        outOfStockCount++;
+      } else if (p.quantity <= p.threshold) {
+        lowStockCount++;
       }
-    }, "Products fetched successfully", 200);
+    });
+
+    return success(
+      res,
+      {
+        products,
+        metrics: {
+          categories: categoriesSet.size,
+          totalProducts: total,
+          totalStockValue,
+          lowStockCount,
+          outOfStockCount,
+        },
+        pagination: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        },
+      },
+      "Products fetched successfully",
+      200,
+    );
   } catch (err) {
     next(err);
   }
@@ -100,13 +137,11 @@ export const bulkCreateProducts = async (req, res, next) => {
     }
 
     if (validationErrors.length > 0) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "CSV Validation Failed",
-          errors: validationErrors,
-        });
+      return res.status(400).json({
+        success: false,
+        message: "CSV Validation Failed",
+        errors: validationErrors,
+      });
     }
 
     try {

@@ -7,7 +7,7 @@ import { get, post } from "../../utils/api.js";
 import { getToken } from "../../utils/auth.js";
 import toast from "react-hot-toast";
 
-const overallInventory = [
+export const defaultInventory = [
   {
     name: "Categories",
     items: [
@@ -20,14 +20,8 @@ const overallInventory = [
   {
     name: "Total Products",
     items: [
-      {
-        value: 868,
-        name: "Last 7 days",
-      },
-      {
-        name: "Amount",
-        value: 25000,
-      },
+      { name: "Total", value: 0 },
+      { name: "Stock Value", value: "₹0" },
     ],
   },
   {
@@ -46,14 +40,8 @@ const overallInventory = [
   {
     name: "Low Stocks",
     items: [
-      {
-        name: "Low Stock",
-        value: 12,
-      },
-      {
-        name: "Out of Stock",
-        value: 2,
-      },
+      { name: "Low Stock", value: 0 },
+      { name: "Out of Stock", value: 0 },
     ],
   },
 ];
@@ -146,6 +134,7 @@ const Product = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [totalPages, setTotalPages] = useState(1);
+  const [overallInventory, setOverallInventory] = useState(defaultInventory);
 
   useEffect(() => {
     setTitle("Product");
@@ -156,11 +145,49 @@ const Product = () => {
     try {
       const res = await get(`/api/products?page=${page}&limit=${itemsPerPage}`);
       const data = res.data?.products || res.products || [];
-      const pagination = res.data?.pagination || res.pagination || { totalPages: 1 };
-      
+      const pagination = res.data?.pagination ||
+        res.pagination || { totalPages: 1 };
+      const metrics = res.data?.metrics || res.metrics;
+
       setProducts(data);
       setTotalPages(pagination.totalPages || 1);
       setCurrentPage(page);
+
+      if (metrics) {
+        setOverallInventory([
+          {
+            name: "Categories",
+            items: [{ name: "Total", value: metrics.categories }],
+          },
+          {
+            name: "Total Products",
+            items: [
+              { name: "Total", value: metrics.totalProducts },
+              { name: "Stock Value", value: `₹${metrics.totalStockValue}` },
+            ],
+          },
+          {
+            name: "Top Sellings",
+            items: [
+              {
+                name: "Last 7 days",
+                value: 12,
+              },
+              {
+                name: "Revenue",
+                value: 2500,
+              },
+            ],
+          },
+          {
+            name: "Low Stocks",
+            items: [
+              { name: "Low Stock", value: metrics.lowStockCount },
+              { name: "Out of Stock", value: metrics.outOfStockCount },
+            ],
+          },
+        ]);
+      }
     } catch (err) {
       toast.error("Failed to fetch products");
     }
@@ -282,56 +309,55 @@ const Product = () => {
             </thead>
             <tbody>
               {products.map((product, index) => {
-                  let availability = "In-stock";
-                  let availabilityClass = "in-stock";
+                let availability = "In-stock";
+                let availabilityClass = "in-stock";
 
-                  const today = new Date();
-                  today.setHours(0, 0, 0, 0);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
 
-                  if (product.expiryDate && new Date(product.expiryDate) < today) {
-                    availability = "Expired";
-                    availabilityClass = "out-of-stock";
-                  } else if (product.quantity === 0) {
-                    availability = "Out of stock";
-                    availabilityClass = "out-of-stock";
-                  } else if (product.quantity <= product.threshold) {
-                    availability = "Low stock";
-                    availabilityClass = "low-stock";
-                  }
+                if (
+                  product.expiryDate &&
+                  new Date(product.expiryDate) < today
+                ) {
+                  availability = "Expired";
+                  availabilityClass = "out-of-stock";
+                } else if (product.quantity === 0) {
+                  availability = "Out of stock";
+                  availabilityClass = "out-of-stock";
+                } else if (product.quantity <= product.threshold) {
+                  availability = "Low stock";
+                  availabilityClass = "low-stock";
+                }
 
-                  return (
-                    <tr key={index}>
-                      <td>{product.name}</td>
-                      <td>₹{product.price}</td>
-                      <td>
-                        {product.quantity} {product.unit}
-                      </td>
-                      <td>{product.threshold}</td>
-                      <td>
-                        {product.expiryDate
-                          ? new Date(product.expiryDate).toLocaleDateString()
-                          : "-"}
-                      </td>
-                      <td className={availabilityClass}>
-                        <div className="availability-cell">
-                          <span>{availability}</span>
-                          <Info
-                            className="info-icon"
-                            size={16}
-                            color="#00B2FF"
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
+                return (
+                  <tr key={index}>
+                    <td>{product.name}</td>
+                    <td>₹{product.price}</td>
+                    <td>
+                      {product.quantity} {product.unit}
+                    </td>
+                    <td>{product.threshold}</td>
+                    <td>
+                      {product.expiryDate
+                        ? new Date(product.expiryDate).toLocaleDateString()
+                        : "-"}
+                    </td>
+                    <td className={availabilityClass}>
+                      <div className="availability-cell">
+                        <span>{availability}</span>
+                        <Info className="info-icon" size={16} color="#00B2FF" />
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
               {products.length === 0 && (
                 <tr>
                   <td
                     colSpan="6"
                     style={{ textAlign: "center", padding: "20px" }}
                   >
-                    No products found.
+                    No products found. Add Products.
                   </td>
                 </tr>
               )}
