@@ -43,3 +43,24 @@ pnpm build
 ```bash
 pnpm lint
 ```
+
+## Bulk Product Import (CSV Format)
+
+To import multiple products at once via the "Import CSV" feature, your CSV file must strictly follow this format with these exact headers:
+
+```csv
+name,productId,category,price,quantity,unit,expiryDate,threshold,imageUrl
+Maggi,MAG001,Food,430,43,Packets,11/12/25,12,https://example.com/maggi.png
+Bru,BRU002,Drink,257,100,kg,21/12/25,5,
+Harpic,HAR003,Cleaning,605,10,L,9/1/25,5,
+```
+
+- **`name`**: String, Required
+- **`productId`**: String, Required, Unique
+- **`category`**: String, Required (e.g., Food, Drink, Cleaning)
+- **`price`**: Number, Required
+- **`quantity`**: Number, Required
+- **`unit`**: String, Required
+- **`expiryDate`**: Date, Optional (can be blank)
+- **`threshold`**: Number, Required
+- **`imageUrl`**: String, Optional (can be blank)
