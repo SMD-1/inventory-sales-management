@@ -37,3 +37,4 @@ const request = async (path, { method = "GET", body, headers } = {}) => {
 
 export const post = (path, body) => request(path, { method: "POST", body });
 export const get = (path) => request(path, { method: "GET" });
+export const put = (path, body) => request(path, { method: "PUT", body });

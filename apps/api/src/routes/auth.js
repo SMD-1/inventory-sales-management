@@ -14,6 +14,7 @@ import {
   verifyOtp,
   resetPassword,
   getMe,
+  updateMe,
 } from "../controllers/authController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
@@ -25,5 +26,6 @@ router.post("/forgot-password", validate(forgotSchema), forgotPassword);
 router.post("/verify-otp", validate(verifyOtpSchema), verifyOtp);
 router.post("/reset-password", validate(resetPasswordSchema), resetPassword);
 router.get("/me", authMiddleware, getMe);
+router.put("/me", authMiddleware, updateMe);
 
 export default router;

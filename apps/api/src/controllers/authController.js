@@ -27,6 +27,31 @@ export const getMe = async (req, res, next) => {
   }
 };
 
+export const updateMe = async (req, res, next) => {
+  try {
+    const { name, password } = req.body;
+    const user = await User.findById(req.user.userId);
+    
+    if (!user) {
+      return error(res, 404, "User not found");
+    }
+
+    if (name) {
+      user.name = name;
+    }
+
+    if (password) {
+      const passwordHash = await bcrypt.hash(password, 10);
+      user.passwordHash = passwordHash;
+    }
+
+    await user.save();
+    return success(res, {}, "Profile updated successfully", 200);
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const signup = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
