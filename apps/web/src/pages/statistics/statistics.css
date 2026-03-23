@@ -40,8 +40,8 @@
 }
 
 .card-icon {
-    font-size: 18px;
-    opacity: 0.7;
+  font-size: 18px;
+  opacity: 0.7;
 }
 
 .card-value {
@@ -136,7 +136,7 @@
   .card-icon {
     font-size: 12px;
   }
-  
+
   .card-icon svg {
     width: 14px;
     height: 14px;

@@ -372,17 +372,17 @@
     padding: 1rem;
     gap: 1rem;
   }
-  
+
   .overall {
     padding: 1rem;
     border-radius: 0.5rem;
   }
-  
+
   .overall-details {
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem 1rem;
   }
-  
+
   .details {
     border: none;
     padding: 0;
@@ -392,7 +392,7 @@
     font-size: 18px;
     margin-left: 0;
   }
-  
+
   .products-table th:nth-child(2),
   .products-table td:nth-child(2),
   .products-table th:nth-child(3),
@@ -403,12 +403,12 @@
   .products-table td:nth-child(5) {
     display: none;
   }
-  
+
   .products-table th,
   .products-table td {
     padding: 1rem 0.5rem;
   }
-  
+
   .products-table th:first-child,
   .products-table td:first-child {
     padding-left: 1rem;
@@ -437,7 +437,7 @@
     overflow-y: auto;
     width: min(90vw, 500px);
   }
-  
+
   .product-header button {
     position: fixed;
     bottom: 8rem;

@@ -6,10 +6,15 @@ import authMiddleware from "../middleware/authMiddleware.js";
 const router = Router();
 
 router.get("/config", authMiddleware, (req, res) => {
-  return success(res, {
-    publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-    urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
-  }, "ImageKit config fetched", 200);
+  return success(
+    res,
+    {
+      publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+      urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
+    },
+    "ImageKit config fetched",
+    200,
+  );
 });
 
 router.get("/auth", authMiddleware, (req, res) => {

@@ -34,10 +34,10 @@
 .rating-pill {
   width: 14px;
   height: 6px;
-  background-color: #F0F1F3;
+  background-color: #f0f1f3;
   border-radius: 3px;
 }
 
 .rating-pill.active {
-  background-color: #FBC02D;
+  background-color: #fbc02d;
 }

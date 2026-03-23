@@ -113,7 +113,8 @@
   .sidebar-link.active {
     background-color: transparent;
   }
-  .sidebar-link svg, .sidebar-link .lucide {
+  .sidebar-link svg,
+  .sidebar-link .lucide {
     width: 28px !important;
     height: 28px !important;
     min-width: 28px;

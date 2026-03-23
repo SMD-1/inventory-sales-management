@@ -55,7 +55,10 @@ const StatsChart = ({ title = "Sales & Purchase" }) => {
       <div className="chart-header">
         <h3>{title}</h3>
         <div className="filter-dropdown">
-          <button className="filter-btn" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+          <button
+            className="filter-btn"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          >
             <Calendar size={18} />
             <span>{filter}</span>
           </button>
@@ -101,40 +104,48 @@ const StatsChart = ({ title = "Sales & Purchase" }) => {
                 <stop offset="100%" stopColor="#57DA65" />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="0" vertical={false} stroke="#D0D3D9" />
-            <XAxis 
-              dataKey="name" 
-              axisLine={false} 
-              tickLine={false} 
-              tick={{ fill: '#858D9D', fontSize: 12 }}
+            <CartesianGrid
+              strokeDasharray="0"
+              vertical={false}
+              stroke="#D0D3D9"
+            />
+            <XAxis
+              dataKey="name"
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: "#858D9D", fontSize: 12 }}
               dy={10}
             />
-            <YAxis 
-              axisLine={false} 
-              tickLine={false} 
-              tick={{ fill: '#858D9D', fontSize: 12 }}
+            <YAxis
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: "#858D9D", fontSize: 12 }}
               dx={-10}
             />
-            <Tooltip 
-              cursor={{ fill: '#f5f5f5' }}
-              contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+            <Tooltip
+              cursor={{ fill: "#f5f5f5" }}
+              contentStyle={{
+                borderRadius: "8px",
+                border: "none",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+              }}
             />
-            <Legend 
-              verticalAlign="bottom" 
-              align="left" 
+            <Legend
+              verticalAlign="bottom"
+              align="left"
               iconType="circle"
-              wrapperStyle={{ paddingTop: '20px' }}
+              wrapperStyle={{ paddingTop: "20px" }}
             />
-            <Bar 
-              dataKey="Purchase" 
-              fill="url(#purchaseGradient)" 
-              radius={[5, 5, 0, 0]} 
+            <Bar
+              dataKey="Purchase"
+              fill="url(#purchaseGradient)"
+              radius={[5, 5, 0, 0]}
               barSize={10}
             />
-            <Bar 
-              dataKey="Sales" 
-              fill="url(#salesGradient)" 
-              radius={[5, 5, 0, 0]} 
+            <Bar
+              dataKey="Sales"
+              fill="url(#salesGradient)"
+              radius={[5, 5, 0, 0]}
               barSize={10}
             />
           </BarChart>

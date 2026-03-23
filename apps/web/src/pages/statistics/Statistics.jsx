@@ -18,7 +18,7 @@ const summaryCards = [
     value: "8,294",
     change: "+180.1% from last month",
     icon: <CreditCard />,
-    bgColor: "#0BF4C8", 
+    bgColor: "#0BF4C8",
   },
   {
     title: "Products In Stock",
@@ -49,8 +49,8 @@ const Statistics = () => {
     <div className="statistics-page">
       <div className="stats-summary-grid">
         {summaryCards.map((card, index) => (
-          <div 
-            className="stat-card" 
+          <div
+            className="stat-card"
             key={index}
             style={{ backgroundColor: card.bgColor }}
           >

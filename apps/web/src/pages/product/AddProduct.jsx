@@ -43,11 +43,14 @@ const AddProduct = () => {
 
   const authenticator = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/imagekit/auth`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`
-        }
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/imagekit/auth`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        },
+      );
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -101,33 +104,52 @@ const AddProduct = () => {
         <h2 className="form-title">New Product</h2>
 
         {ikConfig ? (
-          <IKContext 
-            publicKey={ikConfig.publicKey} 
-            urlEndpoint={ikConfig.urlEndpoint} 
+          <IKContext
+            publicKey={ikConfig.publicKey}
+            urlEndpoint={ikConfig.urlEndpoint}
             authenticator={authenticator}
           >
-            <div className="form-group image-upload-group" style={{ position: "relative" }}>
+            <div
+              className="form-group image-upload-group"
+              style={{ position: "relative" }}
+            >
               <div className="image-upload-box">
                 {imagePreview && (
-                  <img 
-                    src={imagePreview} 
-                    alt="Upload preview" 
-                    style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", borderRadius: "8px" }} 
+                  <img
+                    src={imagePreview}
+                    alt="Upload preview"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      objectPosition: "center",
+                      borderRadius: "8px",
+                    }}
                   />
                 )}
               </div>
-              <div className="upload-placeholder" style={{ pointerEvents: "none" }}>
+              <div
+                className="upload-placeholder"
+                style={{ pointerEvents: "none" }}
+              >
                 {!imagePreview && (
                   <>
                     <p>Drag image here</p>
                     <p>or</p>
                   </>
                 )}
-                <button className="browse-btn" style={{ pointerEvents: "none" }}>
-                  {isUploading ? "Uploading..." : (imagePreview ? "Change image" : "Browse image")}
+                <button
+                  className="browse-btn"
+                  style={{ pointerEvents: "none" }}
+                >
+                  {isUploading
+                    ? "Uploading..."
+                    : imagePreview
+                      ? "Change image"
+                      : "Browse image"}
                 </button>
               </div>
-              
+
               <IKUpload
                 fileName="product-image.jpg"
                 folder="/product-inventory"
@@ -138,7 +160,7 @@ const AddProduct = () => {
                   width: "100%",
                   height: "100%",
                   opacity: 0,
-                  cursor: "pointer"
+                  cursor: "pointer",
                 }}
                 onUploadStart={() => setIsUploading(true)}
                 onError={(err) => {
@@ -155,7 +177,9 @@ const AddProduct = () => {
             </div>
           </IKContext>
         ) : (
-          <div className="form-group image-upload-group">Loading uploader...</div>
+          <div className="form-group image-upload-group">
+            Loading uploader...
+          </div>
         )}
 
         <div className="form-grid">

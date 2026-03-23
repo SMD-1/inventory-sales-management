@@ -118,7 +118,10 @@ const Sidebar = () => {
         </ul>
       </div>
       <div className="profile">
-        <div className="profile-img" style={{ display: "flex", alignItems: "center" }}>
+        <div
+          className="profile-img"
+          style={{ display: "flex", alignItems: "center" }}
+        >
           <CircleUserRound size={40} color="#fff" />
         </div>
         <p

@@ -16,7 +16,6 @@ router.get("/", authMiddleware, getProducts);
 router.post("/", authMiddleware, createProduct);
 
 // POST /api/products/bulk
-// Use express.text to natively receive text/csv
 router.post(
   "/bulk",
   authMiddleware,

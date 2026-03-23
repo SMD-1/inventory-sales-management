@@ -358,9 +358,7 @@ const Product = () => {
               disabled={currentPage >= totalPages || products.length === 0}
               style={{
                 opacity:
-                  currentPage >= totalPages || products.length === 0
-                    ? 0.5
-                    : 1,
+                  currentPage >= totalPages || products.length === 0 ? 0.5 : 1,
                 cursor:
                   currentPage >= totalPages || products.length === 0
                     ? "not-allowed"

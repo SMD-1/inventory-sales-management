@@ -17,7 +17,9 @@ const createToken = (userId) => {
 
 export const getMe = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.userId).select("-passwordHash -otpHash");
+    const user = await User.findById(req.user.userId).select(
+      "-passwordHash -otpHash",
+    );
     if (!user) {
       return error(res, 404, "User not found");
     }
@@ -31,7 +33,7 @@ export const updateMe = async (req, res, next) => {
   try {
     const { name, password } = req.body;
     const user = await User.findById(req.user.userId);
-    
+
     if (!user) {
       return error(res, 404, "User not found");
     }
@@ -68,7 +70,7 @@ export const signup = async (req, res, next) => {
       res,
       { user: { id: user._id, name: user.name, email: user.email } },
       "Account created",
-      201
+      201,
     );
   } catch (error) {
     next(error);
@@ -98,7 +100,7 @@ export const login = async (req, res, next) => {
         user: { id: user._id, name: user.name, email: user.email },
       },
       "Login successful",
-      200
+      200,
     );
   } catch (error) {
     next(error);
@@ -169,7 +171,10 @@ export const resetPassword = async (req, res, next) => {
       return error(res, 404, "User not found");
     }
 
-    if (!user.otpVerifiedUntil || user.otpVerifiedUntil.getTime() < Date.now()) {
+    if (
+      !user.otpVerifiedUntil ||
+      user.otpVerifiedUntil.getTime() < Date.now()
+    ) {
       return error(res, 400, "OTP verification required");
     }
 

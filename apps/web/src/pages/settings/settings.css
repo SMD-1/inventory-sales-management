@@ -7,7 +7,6 @@
   background-color: #fff;
   border-radius: 0.75rem;
   padding: 1.5rem 2rem 2.5rem;
-
 }
 
 .profile-header {
@@ -15,7 +14,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
-  border-bottom: 1px solid #E0E2E7;
+  border-bottom: 1px solid #e0e2e7;
 }
 
 .tab {
@@ -50,11 +49,11 @@
 .form-group label {
   font-size: 14px;
   font-weight: 500;
-  color: #5E5E5E;
+  color: #5e5e5e;
 }
 
 .form-group input {
-  border: 1px solid #3E3E3E;
+  border: 1px solid #3e3e3e;
   border-radius: 0.75rem;
   padding: 0.8rem 1rem;
   font-size: 16px;
@@ -112,7 +111,7 @@
   .profile-card .profile-form {
     gap: 1rem;
   }
-  .profile-form  .form-actions {
+  .profile-form .form-actions {
     margin-top: 1rem;
   }
 }

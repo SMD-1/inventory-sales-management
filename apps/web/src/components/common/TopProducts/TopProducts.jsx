@@ -21,8 +21,8 @@ const TopProducts = () => {
             <span className="product-name">{product.name}</span>
             <div className="product-rating">
               {[...Array(5)].map((_, i) => (
-                <div 
-                  key={i} 
+                <div
+                  key={i}
                   className={`rating-pill ${i < product.rating ? "active" : ""}`}
                 ></div>
               ))}
