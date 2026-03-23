@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 import { error as sendError } from "../utils/response.js";
-import logger from "../utils/logger.js";
 
 const authMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -16,7 +15,6 @@ const authMiddleware = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (err) {
-    logger.warn("JWT verify failed: %s", err.message);
     return sendError(res, 403, "Invalid or expired token");
   }
 };

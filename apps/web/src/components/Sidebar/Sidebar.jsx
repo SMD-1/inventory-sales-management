@@ -1,8 +1,33 @@
-import { House, Settings } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { House, Settings, CircleUserRound, LogOut } from "lucide-react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { get } from "../../utils/api.js";
+import { clearToken } from "../../utils/auth.js";
 import "./sidebar.css";
 
 const Sidebar = () => {
+  const [user, setUser] = useState({ name: "User" });
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await get("/api/auth/me");
+        if (response?.data?.user) {
+          setUser(response.data.user);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user", error);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  const handleLogout = () => {
+    clearToken();
+    navigate("/login");
+  };
+
   return (
     <div className="sidebar">
       <div className="top">
@@ -93,10 +118,28 @@ const Sidebar = () => {
         </ul>
       </div>
       <div className="profile">
-        <div className="profile-img">
-          {/* <img src={profile} alt="profile" /> */}
+        <div className="profile-img" style={{ display: "flex", alignItems: "center" }}>
+          <CircleUserRound size={40} color="#fff" />
         </div>
-        <p>Sarthak</p>
+        <p
+          title={user.name}
+          style={{
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            maxWidth: "100px",
+            marginRight: "auto",
+          }}
+        >
+          {user.name}
+        </p>
+        <LogOut
+          size={20}
+          color="#fff"
+          style={{ cursor: "pointer", marginLeft: "10px", flexShrink: 0 }}
+          onClick={handleLogout}
+          title="Logout"
+        />
       </div>
     </div>
   );

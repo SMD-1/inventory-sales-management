@@ -15,6 +15,18 @@ const createToken = (userId) => {
   return jwt.sign({ userId }, secret, { expiresIn: "7d" });
 };
 
+export const getMe = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.userId).select("-passwordHash -otpHash");
+    if (!user) {
+      return error(res, 404, "User not found");
+    }
+    return success(res, { user }, "User fetched successfully", 200);
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const signup = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
