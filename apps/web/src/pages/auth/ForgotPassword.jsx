@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { Copy } from "lucide-react";
 import "./auth.css";
 import { post } from "../../utils/api.js";
 import { setResetEmail } from "../../utils/auth.js";
@@ -22,7 +23,43 @@ function ForgotPassword() {
         email: data.email,
       });
       if (response?.data?.otp) {
-        toast.success(`OTP: ${response.data.otp}`);
+        const otp = response.data.otp;
+        toast.success(
+          (t) => (
+            <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+              <span>OTP: <strong>{otp}</strong></span>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(otp);
+                  toast.success("Copied to clipboard!");
+                  toast.dismiss(t.id);
+                }}
+                style={{
+                  padding: "6px",
+                  background: "transparent",
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  color: "#64748b",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#334155")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#64748b")}
+                title="Copy OTP"
+              >
+                <Copy size={16} />
+              </button>
+            </div>
+          ),
+          {
+            duration: 6000,
+            style: {
+              padding: "16px 24px",
+            },
+          }
+        );
       } else {
         toast.success("OTP sent to email");
       }
