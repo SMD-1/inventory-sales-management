@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.js";
 import productRoutes from "./routes/product.js";
+import imagekitRoutes from "./routes/imagekit.js";
 import { notFound, errorHandler } from "./middleware/errorHandler.js";
 
 dotenv.config({ path: "../../.env" });
@@ -21,6 +22,7 @@ app.get("/health", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/imagekit", imagekitRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
