@@ -1,4 +1,5 @@
 import Product from "../models/Product.js";
+import Invoice from "../models/Invoice.js";
 import { success, error } from "../utils/response.js";
 import { productSchema } from "../validators/productSchemas.js";
 
@@ -208,6 +209,70 @@ export const bulkCreateProducts = async (req, res, next) => {
       }
       throw dbErr;
     }
+  } catch (err) {
+    next(err);
+  }
+};
+
+// POST /api/products/buy/:id
+export const buyProduct = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { quantity } = req.body;
+
+    if (!quantity || quantity <= 0) {
+      return error(res, 400, "Invalid quantity");
+    }
+
+    const product = await Product.findById(id);
+    if (!product) {
+      return error(res, 404, "Product not found");
+    }
+
+    if (product.quantity < quantity) {
+      return error(res, 400, "Insufficient stock");
+    }
+
+    // Atomically reduce quantity
+    product.quantity -= quantity;
+    await product.save();
+
+    // Generate Invoice ID starting from INV-1001
+    const lastInvoice = await Invoice.findOne({ invoiceId: /^INV-\d+$/ })
+      .sort({ invoiceId: -1 });
+    
+    let nextInvoiceNumber = 1001;
+    if (lastInvoice && lastInvoice.invoiceId) {
+      const match = lastInvoice.invoiceId.match(/INV-(\d+)/);
+      if (match) {
+        nextInvoiceNumber = parseInt(match[1]) + 1;
+      }
+    }
+
+    const invoiceId = `INV-${nextInvoiceNumber}`;
+
+    // Create Invoice
+    const invoice = await Invoice.create({
+      invoiceId,
+      amount: product.price * quantity,
+      status: "Unpaid",
+      items: [
+        {
+          productId: product._id,
+          productName: product.name,
+          quantity,
+          price: product.price,
+        },
+      ],
+      // dueDate is handled by pre-save hook (+7 days)
+    });
+
+    return success(
+      res,
+      { product, invoice },
+      "Product purchased and invoice generated successfully",
+      201,
+    );
   } catch (err) {
     next(err);
   }

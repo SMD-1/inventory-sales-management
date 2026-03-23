@@ -5,6 +5,7 @@ import {
   createProduct,
   getProducts,
   getProductStats,
+  buyProduct,
 } from "../controllers/productController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
@@ -12,6 +13,9 @@ const router = Router();
 
 // GET /api/products/product-stats
 router.get("/product-stats", authMiddleware, getProductStats);
+
+// POST /api/products/buy/:id
+router.post("/buy/:id", authMiddleware, buyProduct);
 
 // GET /api/products
 router.get("/", authMiddleware, getProducts);

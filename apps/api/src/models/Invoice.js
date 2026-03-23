@@ -21,6 +21,29 @@ const invoiceSchema = new mongoose.Schema(
     dueDate: {
       type: Date,
     },
+    items: {
+      type: [
+        {
+          productId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product",
+          },
+          productName: {
+            type: String,
+            trim: true,
+          },
+          quantity: {
+            type: Number,
+            min: 1,
+          },
+          price: {
+            type: Number,
+            min: 0,
+          },
+        },
+      ],
+      default: [],
+    },
   },
   {
     timestamps: true,

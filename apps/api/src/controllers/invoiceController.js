@@ -109,3 +109,36 @@ export const getInvoiceStats = async (req, res, next) => {
     next(err);
   }
 };
+
+// PATCH /api/invoices/:id/status
+export const toggleInvoiceStatus = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const invoice = await Invoice.findById(id);
+    if (!invoice) {
+      return error(res, 404, "Invoice not found");
+    }
+
+    invoice.status = invoice.status === "Paid" ? "Unpaid" : "Paid";
+    await invoice.save();
+
+    return success(res, { invoice }, `Invoice status updated to ${invoice.status}`, 200);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// DELETE /api/invoices/:id
+export const deleteInvoice = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const invoice = await Invoice.findByIdAndDelete(id);
+    if (!invoice) {
+      return error(res, 404, "Invoice not found");
+    }
+
+    return success(res, null, "Invoice deleted successfully", 200);
+  } catch (err) {
+    next(err);
+  }
+};
