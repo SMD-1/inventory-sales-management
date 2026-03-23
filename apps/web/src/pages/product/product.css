@@ -450,3 +450,66 @@
     display: block;
   }
 }
+
+/* Buy Product Modal Styles */
+.buy-product-modal {
+  background: #fff;
+  padding: 2.5rem;
+  border-radius: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  width: 400px;
+  max-width: 90vw;
+  align-items: center;
+}
+
+.buy-product-modal h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1c1c1c;
+  margin: 0;
+  text-align: center;
+}
+
+.buy-product-modal .input-group {
+  width: 100%;
+}
+
+.buy-product-modal input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  color: #101828;
+  outline: none;
+  background-color: #f9fafb;
+}
+
+.buy-product-modal input:focus {
+  border-color: #242531;
+}
+
+.buy-product-modal .buy-btn {
+  width: 100%;
+  background-color: #242531;
+  color: #f9fafb;
+  padding: 0.85rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.buy-product-modal .buy-btn:hover:not(:disabled) {
+  background-color: #383e49;
+}
+
+.buy-product-modal .buy-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

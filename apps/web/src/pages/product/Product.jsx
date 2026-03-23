@@ -6,6 +6,7 @@ import { ChevronRight, Info } from "lucide-react";
 import { get, post } from "../../utils/api.js";
 import { getToken } from "../../utils/auth.js";
 import toast from "react-hot-toast";
+import BuyProductPopup from "./BuyProductPopup";
 
 export const defaultInventory = [
   {
@@ -135,6 +136,7 @@ const Product = () => {
   const itemsPerPage = 10;
   const [totalPages, setTotalPages] = useState(1);
   const [overallInventory, setOverallInventory] = useState(defaultInventory);
+  const [selectedProductForBuy, setSelectedProductForBuy] = useState(null);
 
   useEffect(() => {
     setTitle("Product");
@@ -346,25 +348,25 @@ const Product = () => {
             </thead>
             <tbody>
               {processedProducts.map((product, index) => (
-                <tr key={index}>
-                  <td>{product.name}</td>
-                  <td>₹{product.price}</td>
-                  <td>
-                    {product.quantity} {product.unit}
-                  </td>
-                  <td>{product.threshold}</td>
-                  <td>
-                    {product.expiryDate
-                      ? new Date(product.expiryDate).toLocaleDateString()
-                      : "-"}
-                  </td>
-                  <td className={product.availabilityClass}>
-                    <div className="availability-cell">
-                      <span>{product.availability}</span>
-                      <Info className="info-icon" size={16} color="#00B2FF" />
-                    </div>
-                  </td>
-                </tr>
+                  <tr key={index} onClick={() => setSelectedProductForBuy(product)} style={{ cursor: "pointer" }}>
+                    <td>{product.name}</td>
+                    <td>₹{product.price}</td>
+                    <td>
+                      {product.quantity} {product.unit}
+                    </td>
+                    <td>{product.threshold}</td>
+                    <td>
+                      {product.expiryDate
+                        ? new Date(product.expiryDate).toLocaleDateString()
+                        : "-"}
+                    </td>
+                    <td className={product.availabilityClass}>
+                      <div className="availability-cell">
+                        <span>{product.availability}</span>
+                        <Info className="info-icon" size={16} color="#00B2FF" />
+                      </div>
+                    </td>
+                  </tr>
               ))}
               {processedProducts.length === 0 && (
                 <tr>
@@ -603,6 +605,16 @@ const Product = () => {
             </div>
           </div>
         </div>
+      )}
+      {selectedProductForBuy && (
+        <BuyProductPopup
+          product={selectedProductForBuy}
+          onClose={() => setSelectedProductForBuy(null)}
+          onSuccess={() => {
+            fetchProducts(currentPage);
+            fetchStats();
+          }}
+        />
       )}
     </div>
   );
