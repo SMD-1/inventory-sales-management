@@ -285,7 +285,13 @@ const Product = () => {
                   let availability = "In-stock";
                   let availabilityClass = "in-stock";
 
-                  if (product.quantity === 0) {
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+
+                  if (product.expiryDate && new Date(product.expiryDate) < today) {
+                    availability = "Expired";
+                    availabilityClass = "out-of-stock";
+                  } else if (product.quantity === 0) {
                     availability = "Out of stock";
                     availabilityClass = "out-of-stock";
                   } else if (product.quantity <= product.threshold) {
