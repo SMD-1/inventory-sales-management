@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useHeader } from "../../contexts/header-context";
 import {
   MoreVertical,
@@ -10,6 +10,9 @@ import {
   Printer,
   Info,
 } from "lucide-react";
+import { get } from "../../utils/api";
+import { toast } from "react-hot-toast";
+import { useReactToPrint } from "react-to-print";
 import "./invoice.css";
 
 const invoiceData = [
@@ -79,15 +82,74 @@ const invoiceData = [
 ];
 
 const Invoice = () => {
-  const { setTitle } = useHeader();
-  const [invoices, setInvoices] = useState(invoiceData);
+  const { setTitle, searchQuery } = useHeader();
+  const [invoices, setInvoices] = useState([]);
+  const [stats, setStats] = useState({
+    recentTransactions: 0,
+    totalInvoices: 0,
+    processedInvoices: 0,
+    paidAmountLast7Days: 0,
+    paidInvoicesCountLast7Days: 0,
+    unpaidAmountTotal: 0,
+    unpaidInvoicesCount: 0
+  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [itemsPerPage] = useState(10);
   const [openMenuId, setOpenMenuId] = useState(null);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [invoiceToDelete, setInvoiceToDelete] = useState(null);
+  const printRef = useRef(null);
+
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: (() => {
+      if (!selectedInvoice) return "Invoice";
+      const baseName = "Customer";
+      const invoiceNumber = (selectedInvoice.invoiceId || "").trim() || "Invoice";
+      return `${baseName}-${invoiceNumber}`;
+    })(),
+  });
+
+  const handleDownloadPdf = handlePrint;
 
   useEffect(() => {
     setTitle("Invoice");
+    fetchStats();
   }, [setTitle]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      fetchInvoices(1);
+    }, 300);
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
+
+  const fetchStats = async () => {
+    try {
+      const res = await get("/api/invoices/invoice-stats");
+      setStats(res.data || res);
+    } catch (err) {
+      console.error("Failed to fetch invoice stats", err);
+    }
+  };
+
+  const fetchInvoices = async (page = currentPage) => {
+    try {
+      let url = `/api/invoices?page=${page}&limit=${itemsPerPage}`;
+      if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
+      
+      const res = await get(url);
+      const data = res.data?.invoices || res.invoices || [];
+      const pagination = res.data?.pagination || res.pagination || { totalPages: 1 };
+      
+      setInvoices(data);
+      setTotalPages(pagination.totalPages || 1);
+      setCurrentPage(page);
+    } catch (err) {
+      toast.error("Failed to fetch invoices");
+    }
+  };
 
   const handleToggleStatus = (id) => {
     setInvoices((prev) =>
@@ -116,7 +178,7 @@ const Invoice = () => {
           <div className="status-card">
             <span className="label">Recent Transactions</span>
             <div className="status-row">
-              <span className="main-val">24</span>
+              <span className="main-val">{stats.recentTransactions}</span>
               <span className="sub-val">Last 7 days</span>
             </div>
           </div>
@@ -125,11 +187,11 @@ const Invoice = () => {
             <span className="label">Total Invoices</span>
             <div className="sub-info-row">
               <div className="sub-info">
-                <span className="val">152</span>
+                <span className="val">{stats.totalInvoices}</span>
                 <span className="text">Total Till Date</span>
               </div>
               <div className="sub-info">
-                <span className="val">138</span>
+                <span className="val">{stats.processedInvoices}</span>
                 <span className="text">Processed</span>
               </div>
             </div>
@@ -139,12 +201,12 @@ const Invoice = () => {
             <span className="label">Paid Amount</span>
             <div className="sub-info-row">
               <div className="sub-info">
-                <span className="val">₹1,20,500</span>
+                <span className="val">₹{stats.paidAmountLast7Days?.toLocaleString()}</span>
                 <span className="text">Last 7 days</span>
               </div>
               <div className="sub-info">
-                <span className="val">97</span>
-                <span className="text">customers</span>
+                <span className="val">{stats.paidInvoicesCountLast7Days}</span>
+                <span className="text">Paid Invoices</span>
               </div>
             </div>
           </div>
@@ -153,12 +215,12 @@ const Invoice = () => {
             <span className="label">Unpaid Amount</span>
             <div className="sub-info-row">
               <div className="sub-info">
-                <span className="val">₹45,800</span>
+                <span className="val">₹{stats.unpaidAmountTotal?.toLocaleString()}</span>
                 <span className="text">Total Pending</span>
               </div>
               <div className="sub-info">
-                <span className="val">18</span>
-                <span className="text">Customers</span>
+                <span className="val">{stats.unpaidInvoicesCount}</span>
+                <span className="text">Invoices</span>
               </div>
             </div>
           </div>
@@ -183,10 +245,10 @@ const Invoice = () => {
             </thead>
             <tbody>
               {invoices.map((inv, index) => (
-                <tr key={index}>
-                  <td className="invoice-id">{inv.id}</td>
-                  <td className="ref-num">{inv.ref}</td>
-                  <td>₹ {inv.amount}</td>
+                <tr key={inv._id || index}>
+                  <td className="invoice-id">{inv.invoiceId}</td>
+                  <td className="ref-num">{inv._id}</td>
+                  <td>₹ {inv.amount?.toLocaleString()}</td>
                   <td
                     className={
                       inv.status === "Paid" ? "status-paid" : "status-unpaid"
@@ -196,11 +258,19 @@ const Invoice = () => {
                   </td>
                   <td className="date-cell">
                     <div className="date-content">
-                      <span>{inv.date}</span>
+                      <span>
+                        {inv.dueDate
+                          ? new Date(inv.dueDate).toLocaleDateString("en-GB", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "2-digit",
+                            }).replace(/ /g, "-")
+                          : "-"}
+                      </span>
                       <button
                         className="more-btn"
                         onClick={() => {
-                          setOpenMenuId(openMenuId === inv.id ? null : inv.id);
+                          setOpenMenuId(openMenuId === inv.invoiceId ? null : inv.invoiceId);
                           setInvoiceToDelete(null);
                         }}
                       >
@@ -216,13 +286,13 @@ const Invoice = () => {
                       </button>
                       <button 
                         className="mobile-action-btn delete" 
-                        onClick={() => setInvoiceToDelete(inv.id)}
+                        onClick={() => setInvoiceToDelete(inv.invoiceId)}
                       >
                         <Trash2 size={16} color="#000" />
                       </button>
                     </div>
 
-                    {openMenuId === inv.id && invoiceToDelete !== inv.id && (
+                    {openMenuId === inv.invoiceId && invoiceToDelete !== inv.invoiceId && (
                       <>
                         <div
                           className="list-overlay"
@@ -234,7 +304,7 @@ const Invoice = () => {
                           {inv.status === "Unpaid" ? (
                             <button
                               className="status-btn-toggle to-paid"
-                              onClick={() => handleToggleStatus(inv.id)}
+                              onClick={() => handleToggleStatus(inv.invoiceId)}
                             >
                               <CheckCircle size={14} />
                               Paid
@@ -254,7 +324,7 @@ const Invoice = () => {
                               <button
                                 className="menu-item delete"
                                 onClick={() => {
-                                  setInvoiceToDelete(inv.id);
+                                  setInvoiceToDelete(inv.invoiceId);
                                   setOpenMenuId(null);
                                 }}
                               >
@@ -267,7 +337,7 @@ const Invoice = () => {
                       </>
                     )}
 
-                    {invoiceToDelete === inv.id && (
+                    {invoiceToDelete === inv.invoiceId && (
                       <>
                         <div
                           className="list-overlay"
@@ -298,15 +368,36 @@ const Invoice = () => {
                   </td>
                 </tr>
               ))}
+              {invoices.length === 0 && (
+                <tr>
+                  <td colSpan="5" style={{ textAlign: "center", padding: "2rem" }}>
+                    {searchQuery ? "No matching invoices found." : "No invoices found."}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
 
         {/* Pagination */}
         <div className="pagination">
-          <button className="page-btn">Previous</button>
-          <span className="pagination-info">Page 1 of 10</span>
-          <button className="page-btn">Next</button>
+          <button 
+            className="page-btn" 
+            onClick={() => fetchInvoices(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <span className="pagination-info">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button 
+            className="page-btn" 
+            onClick={() => fetchInvoices(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
         </div>
       </div>
 
@@ -320,7 +411,7 @@ const Invoice = () => {
             className="invoice-modal-content"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="invoice-inner-paper">
+            <div className="invoice-inner-paper" ref={printRef}>
               <div className="invoice-sticky-header">
                 <div className="invoice-header-title">
                   <h1>INVOICE</h1>
@@ -353,19 +444,19 @@ const Invoice = () => {
                 <div className="invoice-info-col">
                   <div className="info-item">
                     <h4>Invoice #</h4>
-                    <p>{selectedInvoice.id}</p>
+                    <p>{selectedInvoice.invoiceId}</p>
                   </div>
                   <div className="info-item">
                     <h4>Invoice date</h4>
-                    <p>01-Apr-2025</p>
+                    <p>{selectedInvoice.createdAt ? new Date(selectedInvoice.createdAt).toLocaleDateString() : "-"}</p>
                   </div>
                   <div className="info-item">
                     <h4>Reference</h4>
-                    <p>INV-057</p>
+                    <p>{selectedInvoice._id}</p>
                   </div>
                   <div className="info-item">
                     <h4>Due date</h4>
-                    <p>{selectedInvoice.date}</p>
+                    <p>{selectedInvoice.dueDate ? new Date(selectedInvoice.dueDate).toLocaleDateString() : "-"}</p>
                   </div>
                 </div>
 
@@ -449,10 +540,18 @@ const Invoice = () => {
               >
                 <X size={24} />
               </button>
-              <button className="action-circle-btn download">
+              <button 
+                className="action-circle-btn download"
+                onClick={handleDownloadPdf}
+                title="Download as PDF"
+              >
                 <Download size={24} />
               </button>
-              <button className="action-circle-btn print">
+              <button 
+                className="action-circle-btn print"
+                onClick={handlePrint}
+                title="Print Invoice"
+              >
                 <Printer size={24} />
               </button>
             </div>

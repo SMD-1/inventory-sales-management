@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.js";
 import productRoutes from "./routes/product.js";
+import invoiceRoutes from "./routes/invoice.js";
 import imagekitRoutes from "./routes/imagekit.js";
 import { notFound, errorHandler } from "./middleware/errorHandler.js";
 
@@ -22,6 +23,7 @@ app.get("/health", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/invoices", invoiceRoutes);
 app.use("/api/imagekit", imagekitRoutes);
 
 app.use(notFound);
